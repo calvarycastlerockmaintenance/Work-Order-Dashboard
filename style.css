@@ -32,3 +32,8 @@ dialog{border:1px solid var(--border);border-radius:12px;padding:0}
 menu{display:flex;justify-content:flex-end;gap:8px;margin:10px 0 0;padding:0}
 .msg{font-size:13px;margin-top:6px}
 @media (max-width:680px){.filters{grid-template-columns:1fr}}
+.brand .logo {
+  height: 28px;
+  width: auto;
+  border-radius: 6px;
+  display: block;
