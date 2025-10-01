@@ -1,5 +1,5 @@
-// cache the app shell (not API responses)
-const CACHE = 'workorders-v1';
+// bump this when you change files so browsers fetch fresh copies
+const CACHE = 'workorders-v4';
 const ASSETS = ['./','./index.html','./style.css','./app.js','./manifest.json'];
 
 self.addEventListener('install', e => {
