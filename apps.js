@@ -15,7 +15,9 @@ const dlgStatus = document.getElementById('dlgStatus');
 const dlgName = document.getElementById('dlgName');
 const dlgCode = document.getElementById('dlgCode');
 const dlgMsg = document.getElementById('dlgMsg');
-const dlgSave = document.getElementById('dlgSave');
+const dlgSave = document.getElementById('dlgSave'); 
+openForm.href = BACKEND_URL + '?path=form';
+
 
 /***** STATE *****/
 let STATUS_OPTIONS = [];
