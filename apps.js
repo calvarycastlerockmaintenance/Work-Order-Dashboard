@@ -7,7 +7,6 @@ const statusFilter = document.getElementById('statusFilter');
 const categoryFilter = document.getElementById('categoryFilter');
 const searchBox = document.getElementById('searchBox');
 const refreshBtn = document.getElementById('refreshBtn');
-const openForm = document.getElementById('openForm');
 
 const dlg = document.getElementById('updDlg');
 const dlgTicket = document.getElementById('dlgTicket');
@@ -15,9 +14,7 @@ const dlgStatus = document.getElementById('dlgStatus');
 const dlgName = document.getElementById('dlgName');
 const dlgCode = document.getElementById('dlgCode');
 const dlgMsg = document.getElementById('dlgMsg');
-const dlgSave = document.getElementById('dlgSave'); 
-openForm.href = BACKEND_URL + '?path=form';
-
+const dlgSave = document.getElementById('dlgSave');
 
 /***** STATE *****/
 let STATUS_OPTIONS = [];
@@ -97,10 +94,6 @@ refreshBtn.addEventListener('click', () => loadTickets().catch(()=>{}));
 statusFilter.addEventListener('change', applyFilters);
 categoryFilter.addEventListener('change', applyFilters);
 searchBox.addEventListener('input', applyFilters);
-
-openForm.addEventListener('click', () => {
-  openForm.href = BACKEND_URL + '?path=form';
-});
 
 list.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-upd]');
