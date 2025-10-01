@@ -74,6 +74,15 @@
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    <div class="actions">
+  <button id="btnRefresh" type="button" class="btn">Refresh</button>
+  <a id="btnPublicForm" class="btn" href="/public-form.html">Public Form</a>
+</div>
+<script>
+  document.getElementById('btnRefresh')
+    .addEventListener('click', () => location.reload());
+</script>
+
   </script>
 </body>
 </html>
