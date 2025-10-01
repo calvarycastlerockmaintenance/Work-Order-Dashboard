@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Calvary – Work Orders</title>
+<link rel="icon" href="icons/icon-192.png">
+<style>
+  :root { --bg:#0b1020; --card:#11172a; --ink:#e7ecf5; --muted:#a6b0c3; --brand:#23c9b1; --border:#1c2742; --ok:#27c29b; --warn:#ffd166; --bad:#ff6b6b }
+  *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#0b1020;color:var(--ink)}
+  header{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,#0f1730,#0b1020);border-bottom:1px solid var(--border);padding:12px 16px}
+  .bar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .pill{padding:6px 10px;border:1px solid var(--border);border-radius:999px;color:var(--muted);font-size:12px}
+  .tabs{display:flex;gap:8px;padding:10px 16px}
+  .tab{border:1px solid var(--border);border-radius:999px;padding:8px 12px;cursor:pointer;color:var(--muted)}
+  .tab.active{background:var(--brand);color:#022a25;border-color:#20bda7;font-weight:800}
+  .wrap{max-width:960px;margin:0 auto;padding:16px}
+  .grid{display:grid;gap:12px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px}
+  .row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .tag{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted)}
+  .tag.open{border-color:#2b9;color:#2b9}
+  .tag.progress{border-color:#79f;color:#79f}
+  .tag.hold{border-color:#fd0;color:#fd0}
+  .tag.done{border-color:#7f7;color:#7f}
+  .btn{padding:8px 10px;border-radius:10px;border:1px solid #20bda7;background:linear-gradient(180deg,#23c9b1,#18a28f);color:#022a25;font-weight:800;cursor:pointer}
+  .muted{color:var(--muted);font-size:13px}
+  .photos{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .photos img{height:72px;border-radius:10px;border:1px solid var(--border)}
+  dialog{border:1px solid var(--border);border-radius:14px;background:#11172a;color:var(--ink);padding:16px}
+  input,select{padding:10px;border-radius:10px;border:1px solid var(--border);background:#0b1020;color:var(--ink)}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <img src="icons/icon-192.png" width="28" height="28" style="border-radius:7px">
+      <div>
+        <div class="pill">Calvary Castle Rock</div>
+        <div style="font-weight:800">Work Orders</div>
+      </div>
+    </div>
+    <button class="btn" id="btnRefresh">Refresh</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" data-tab="Open">Open</div>
+    <div class="tab" data-tab="In Progress">In Progress</div>
+    <div class="tab" data-tab="On Hold">On Hold</div>
+    <div class="tab" data-tab="Completed">Completed</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="list" class="grid"></div>
+</div>
+
+<dialog id="dlg">
+  <form id="dlgForm" method="dialog">
+    <h3 id="dlgTitle" style="margin:0 0 10px">Update Status</h3>
+    <div class="row"><div class="muted">Ticket:</div><div id="dlgId" style="font-weight:700"></div></div>
+    <div style="height:8px"></div>
+    <label>Status</label>
+    <select id="dlgStatus">
+      <option>Open</option><option>In Progress</option><option>On Hold</option><option>Completed</option><option>Canceled</option>
+    </select>
+    <div style="height:8px"></div>
+    <label>Your name</label>
+    <input id="dlgName" placeholder="Maintenance tech">
+    <div style="height:12px"></div>
+    <div class="row">
+      <button class="btn" id="dlgSave" type="submit">Save</button>
+      <button class="btn" style="background:#182034;color:var(--ink);border-color:var(--border)" id="dlgClose" type="button">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+  // ===== CONFIG =====
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbz_eCJ2micA3zV68DzZGBfJ-6FcvmPjHOKhwX151GWFirJyhlbPIfBDbsaPyC7kRd6Nmg/exec';
+  const MAINT_CODE  = 'MAINTENANCE';
+
+  const listEl  = document.getElementById('list');
+  const tabs    = Array.from(document.querySelectorAll('.tab'));
+  const dlg     = document.getElementById('dlg');
+  const dlgStatus = document.getElementById('dlgStatus');
+  const dlgName   = document.getElementById('dlgName');
+  const dlgId     = document.getElementById('dlgId');
+  const dlgTitle  = document.getElementById('dlgTitle');
+  const dlgSave   = document.getElementById('dlgSave');
+  const dlgClose  = document.getElementById('dlgClose');
+
+  let all = [];
+  let currentTab = 'Open';
+  let currentTicket = null;
+
+  function tagClass(status){
+    switch((status||'').toLowerCase()){
+      case 'open': return 'tag open';
+      case 'in progress': return 'tag progress';
+      case 'on hold': return 'tag hold';
+      case 'completed': return 'tag done';
+      default: return 'tag';
+    }
+  }
+
+  async function load(){
+    const res = await fetch(BACKEND_URL + '?action=gettickets', {cache:'no-store'});
+    const data = await res.json();
+    all = Array.isArray(data) ? data : [];
+    render();
+  }
+
+  function render(){
+    tabs.forEach(t=>t.classList.toggle('active', t.dataset.tab===currentTab));
+    listEl.innerHTML = '';
+    all.filter(x=>x.Status===currentTab).forEach(t=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="row">
+          <div style="font-weight:800">${t.Category} • ${t.Room || 'No room'}</div>
+          <div class="${tagClass(t.Status)}">${t.Status}</div>
+        </div>
+        <div class="muted">#${t.TicketID} • ${t.Timestamp} • ${t.Name}</div>
+        <div style="margin-top:8px">${(t.Description||'').replace(/\n/g,'<br>')}</div>
+        ${
+          (t.ImageURLArray && t.ImageURLArray.length)
+          ? `<div class="photos">` + t.ImageURLArray.map(u=>`<a href="${u}" target="_blank" rel="noopener"><img src="${u}"></a>`).join('') + `</div>`
+          : `<div class="muted" style="margin-top:6px">No photos</div>`
+        }
+        <div class="row" style="margin-top:10px">
+          <div class="muted">Last updated by ${t.LastUpdatedBy||'—'} • ${t.LastUpdatedAt||'—'}</div>
+          <button class="btn">Update</button>
+        </div>`;
+      card.querySelector('.btn').addEventListener('click', ()=>{
+        currentTicket = t;
+        dlgId.textContent = t.TicketID;
+        dlgStatus.value   = t.Status || 'Open';
+        dlgTitle.textContent = `Update Status – ${t.Room || t.Category}`;
+        dlg.showModal();
+      });
+      listEl.appendChild(card);
+    });
+  }
+
+  tabs.forEach(t=>t.addEventListener('click', ()=>{ currentTab = t.dataset.tab; render(); }));
+  document.getElementById('btnRefresh').addEventListener('click', load);
+  dlgClose.addEventListener('click', ()=> dlg.close());
+
+  document.getElementById('dlgForm').addEventListener('submit', async (ev)=>{
+    ev.preventDefault();
+    if (!currentTicket) return;
+    const body = {
+      action: 'updatestatus',
+      ticketId: currentTicket.TicketID,
+      newStatus: dlgStatus.value,
+      maintCode: MAINT_CODE,
+      updaterName: dlgName.value || ''
+    };
+    const res = await fetch(BACKEND_URL+'?action=updatestatus', {
+      method:'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    const ok = await res.json();
+    if (ok && ok.ok){
+      dlg.close();
+      await load();
+    } else {
+      alert('Update failed: ' + (ok && ok.error || 'unknown'));
+    }
+  });
+
+  load();
+</script>
+</body>
+</html>
