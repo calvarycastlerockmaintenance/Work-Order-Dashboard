@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calvary Work Orders</title>
+  <meta name="theme-color" content="#0f766e" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">
+      <!-- put your logo file as logo.png next to these files (optional) -->
+      <!-- <img src="logo.png" alt="logo" /> -->
+      <h1>Work Orders</h1>
+    </div>
+    <nav class="nav">
+      <a class="btn" id="refreshBtn">Refresh</a>
+      <a class="btn btn-alt" id="openForm" target="_blank" rel="noopener">Public Form</a>
+    </nav>
+  </header>
+
+  <section class="filters">
+    <select id="statusFilter">
+      <option value="">All Statuses</option>
+    </select>
+    <select id="categoryFilter">
+      <option value="">All Categories</option>
+    </select>
+    <input id="searchBox" placeholder="Search name, room, description…" />
+  </section>
+
+  <main id="list" class="grid"></main>
+
+  <!-- Update modal -->
+  <dialog id="updDlg">
+    <form method="dialog" class="dlg">
+      <h3>Update Status</h3>
+      <div class="row">
+        <label>Ticket ID</label>
+        <input id="dlgTicket" readonly />
+      </div>
+      <div class="row">
+        <label>New Status</label>
+        <select id="dlgStatus"></select>
+      </div>
+      <div class="row">
+        <label>Your Name (optional)</label>
+        <input id="dlgName" placeholder="e.g., Alex" />
+      </div>
+      <div class="row">
+        <label>Maintenance Code</label>
+        <input id="dlgCode" placeholder="MAINTENANCE" />
+      </div>
+      <menu>
+        <button value="cancel" class="btn btn-alt">Cancel</button>
+        <button id="dlgSave" class="btn">Save</button>
+      </menu>
+      <div id="dlgMsg" class="msg"></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
+</body>
+</html>
