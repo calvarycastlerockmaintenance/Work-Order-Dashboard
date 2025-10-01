@@ -1,77 +1,48 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Calvary Work Orders</title>
-  <meta name="theme-color" content="#0f766e" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work Orders Dashboard</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin:0; padding:0; background:#f8fafc; color:#111827; }
+    header { background:#0f766e; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { margin:0; font-size:20px; }
+    .actions { display:flex; gap:10px; }
+    .btn {
+      background:#fff; color:#0f766e; border:0; border-radius:6px;
+      padding:8px 14px; font-weight:600; cursor:pointer; text-decoration:none;
+    }
+    .btn:hover { background:#e0f2f1; }
+    main { padding:20px; }
+  </style>
 </head>
 <body>
-  <header class="bar">
-    <div class="brand">
-      <!-- If you upload logo.png, uncomment the next line -->
-      <!-- <img src="logo.png" alt="Calvary" class="logo" /> -->
-      <h1>Work Orders</h1>
+  <header>
+    <h1>Work Orders Dashboard</h1>
+    <div class="actions">
+      <!-- Refresh is a real button -->
+      <button id="btnRefresh" type="button" class="btn">Refresh</button>
+      <!-- Public Form opens your Apps Script form in a new tab -->
+      <a id="btnPublicForm"
+         class="btn"
+         href="https://script.google.com/macros/s/YOUR_EXEC_ID/exec?path=form"
+         target="_blank" rel="noopener">
+        Public Form
+      </a>
     </div>
-    <nav class="nav">
-      <a class="btn" id="refreshBtn">Refresh</a>
-      <!-- PUBLIC FORM LINK SET DIRECTLY HERE -->
-      <a
-        class="btn btn-alt"
-        id="openForm"
-        target="_blank"
-        rel="noopener"
-        href="https://script.google.com/macros/s/AKfycbxid0jA_sAR6YKiAC3T8ykN2siE2zf-Q0AdPZsplR8Z7HRuzUD9aDAYKvlvwTWPFm3U/exec?path=form"
-      >Public Form
-    </nav>
   </header>
-
-  <section class="filters">
-    <select id="statusFilter">
-      <option value="">All Statuses</option>
-    </select>
-    <select id="categoryFilter">
-      <option value="">All Categories</option>
-    </select>
-    <input id="searchBox" placeholder="Search name, room, description…" />
-  </section>
-
-  <main id="list" class="grid"></main>
-
-  <!-- Update modal -->
-  <dialog id="updDlg">
-    <form method="dialog" class="dlg">
-      <h3>Update Status</h3>
-      <div class="row">
-        <label>Ticket ID</label>
-        <input id="dlgTicket" readonly />
-      </div>
-      <div class="row">
-        <label>New Status</label>
-        <select id="dlgStatus"></select>
-      </div>
-      <div class="row">
-        <label>Your Name (optional)</label>
-        <input id="dlgName" placeholder="e.g., Alex" />
-      </div>
-      <div class="row">
-        <label>Maintenance Code</label>
-        <input id="dlgCode" placeholder="MAINTENANCE" />
-      </div>
-      <menu>
-        <button value="cancel" class="btn btn-alt">Cancel</button>
-        <button id="dlgSave" class="btn">Save</button>
-      </menu>
-      <div id="dlgMsg" class="msg"></div>
-    </form>
-  </dialog>
-
-  <script src="app.js"></script>
+  <main>
+    <p>This is where your dashboard content will load.</p>
+  </main>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    // Hook up Refresh button
+    document.getElementById('btnRefresh')
+      .addEventListener('click', () => {
+        // Replace this with your actual reload function
+        console.log('Refresh clicked!');
+        location.reload();
+      });
   </script>
 </body>
 </html>
-
