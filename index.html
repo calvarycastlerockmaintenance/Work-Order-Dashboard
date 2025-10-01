@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Calvary Work Orders</title>
+  <link rel="icon" href="icons/icon-192.png">
+  <style>
+    :root { --bg:#0b1020; --card:#11172a; --ink:#e7ecf5; --muted:#a6b0c3; --brand:#23c9b1; --border:#1c2742 }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#0b1020;color:var(--ink)}
+    .shell{max-width:720px;margin:40px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+    h1{margin:0 0 10px}
+    p{color:var(--muted)}
+    .btn{display:block;margin:10px 0;padding:14px 16px;border-radius:12px;border:1px solid #20bda7;
+         background:linear-gradient(180deg,#23c9b1,#18a28f);color:#022a25;font-weight:800;text-align:center;text-decoration:none}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row .btn{flex:1 1 220px}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="card">
+      <img src="icons/icon-192.png" alt="Calvary" width="48" height="48" style="border-radius:12px">
+      <h1>Calvary Work Orders</h1>
+      <p>See it → say it. Submit a ticket or open the staff dashboard.</p>
+      <div class="row">
+        <a class="btn" href="form.html">Public Form</a>
+        <a class="btn" href="dashboard.html">Staff Dashboard</a>
+      </div>
+      <p class="muted">Tip: print QR codes that link to <code>form.html?room=Sanctuary</code> etc.</p>
+    </div>
+  </div>
+</body>
+</html>
