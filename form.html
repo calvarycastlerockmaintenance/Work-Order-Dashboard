@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calvary Work Order</title>
+  <link rel="icon" href="icons/icon-192.png">
+  <style>
+    :root { --bg:#0b1020; --card:#11172a; --ink:#e7ecf5; --muted:#a6b0c3; --brand:#23c9b1; --border:#1c2742; }
+    * { box-sizing: border-box }
+    body { margin:0; font-family: Inter, system-ui, Arial, sans-serif; color:var(--ink); background:#0b1020; }
+    .shell { max-width: 720px; margin: 32px auto; padding: 0 16px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px }
+    h1 { margin:0 0 8px; font-weight:800; font-size:24px }
+    p.lead { margin:0 0 14px; color:var(--muted) }
+    .row { display:grid; gap:8px; margin:12px 0 }
+    label { font-weight:600; }
+    input, select, textarea { width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--border); background:#0b1020; color:var(--ink); }
+    textarea { min-height:120px }
+    .muted { color:var(--muted); font-size:13px }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:12px 16px; border-radius:12px; border:1px solid #20bda7; color:#022a25; font-weight:800; background:linear-gradient(180deg,#23c9b1,#18a28f); cursor:pointer }
+    .inline { display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+    .err { color:#ffb4b4; font-weight:700; display:none }
+    .ok  { color:#9cf7df; font-weight:700; display:none }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="card">
+      <img src="icons/icon-192.png" alt="Calvary" width="40" height="40" style="border-radius:10px">
+      <h1>Submit a Work Order</h1>
+      <p class="lead">Add details & photos. We’ll route it to the right team.</p>
+
+      <form id="ticketForm" method="post" enctype="multipart/form-data">
+        <div class="row">
+          <label>Full name</label>
+          <input name="Name" required placeholder="Your name">
+        </div>
+        <div class="row">
+          <label>Email</label>
+          <input type="email" name="Email" required placeholder="you@example.com">
+        </div>
+        <div class="row">
+          <label>Phone (optional)</label>
+          <input name="Phone" placeholder="(555) 555-5555">
+        </div>
+        <div class="row">
+          <label>Category</label>
+          <select name="Category" required>
+            <option value="" disabled selected>Choose a category…</option>
+            <option>Security</option>
+            <option>Clean Team</option>
+            <option>Building Maintenance</option>
+            <option>IT/AV</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Room / Location</label>
+          <input name="Room" id="roomField" placeholder="e.g., Sanctuary, Lobby A">
+          <div class="muted">Can be pre-filled by QR (e.g. <code>?room=Sanctuary</code>).</div>
+        </div>
+        <div class="row">
+          <label>Description</label>
+          <textarea name="Description" required placeholder="What needs attention?"></textarea>
+        </div>
+        <div class="row">
+          <label>Photos</label>
+          <!-- name 'photos' lets Apps Script see photos, photos_1, photos_2... -->
+          <input type="file" name="photos" accept="image/*,.heic" multiple>
+          <div class="muted">Attach one or more photos (optional).</div>
+        </div>
+
+        <!-- critical: forces doPost to form branch on backend -->
+        <input type="hidden" name="action" value="submit">
+
+        <div class="inline">
+          <button class="btn" type="submit" id="btnSubmit">Submit Ticket</button>
+          <span class="err" id="err"></span>
+          <span class="ok" id="ok"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ===== your Apps Script /exec URL =====
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbz_eCJ2micA3zV68DzZGBfJ-6FcvmPjHOKhwX151GWFirJyhlbPIfBDbsaPyC7kRd6Nmg/exec';
+
+    // Prefill room from QR param
+    const params = new URLSearchParams(location.search);
+    if (params.get('room')) document.getElementById('roomField').value = params.get('room');
+
+    // Post natively (not fetch) to ensure Apps Script receives e.files
+    const form = document.getElementById('ticketForm');
+    const btn  = document.getElementById('btnSubmit');
+    const err  = document.getElementById('err');
+    const ok   = document.getElementById('ok');
+
+    form.action = BACKEND_URL; // direct post to Apps Script
+    form.addEventListener('submit', () => {
+      err.style.display = 'none';
+      ok.style.display  = 'inline';
+      ok.textContent = 'Submitting…';
+      btn.disabled = true;
+    });
+  </script>
+</body>
+</html>
