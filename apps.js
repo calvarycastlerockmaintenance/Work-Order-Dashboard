@@ -1,5 +1,5 @@
 /***** SET THIS TO YOUR DEPLOYED WEB APP URL (no query string) *****/
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcBt4XJBgd_SunOcvD425reYfF9bz7d2WdEqoG6vINzree0mFIJYRZGUf05NAffPikjw/exec?path=form';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzjZf2VyQqvx01y729ItnyVYCMRPdeDGJubTD1IGZffEtBrKv46y7CW7zYCLgs76PQaKw/exec';
 
 /***** DOM *****/
 const list = document.getElementById('list');
